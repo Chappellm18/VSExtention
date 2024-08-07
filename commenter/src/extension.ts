@@ -1,27 +1,44 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+import path from 'path';
 import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "commenter" is now active!');
+    console.log('Congratulations, your extension "commenter" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('commenter.CommentCurrentFile', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Commenter!');
+    // Register the command to create a file
+    const initFunction = vscode.commands.registerCommand('commenter.init', async () => {
+        // Get the workspace folder
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) {
+            vscode.window.showInformationMessage('No workspace folder found.');
+            return;
+        }
 
-		/// Gather all the comments in the current file and create a md doc based on it
-	});
+        // Define the file path and content
+        const filePath = path.join(workspaceFolder.uri.fsPath, 'newfile.md');
+        const fileUri = vscode.Uri.file(filePath);
+        const fileContent = 'Hello, world!'; // Use a string directly for text content
 
-	context.subscriptions.push(disposable);
+        try {
+            // Write the file
+            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(fileContent));
+            vscode.window.showInformationMessage('File created successfully.');
+        } catch (error) {
+            vscode.window.showErrorMessage('Failed to create file: ' + (error as Error).message);
+        }
+    });
+
+    context.subscriptions.push(initFunction);
+
+    // Register another command
+    const disposable = vscode.commands.registerCommand('commenter.CommentCurrentFile', () => {
+        vscode.window.showInformationMessage('Hello World from Commenter!');
+
+        // Placeholder for additional functionality
+    });
+
+    context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated

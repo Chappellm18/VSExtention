@@ -14,8 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "commenter.helloWorld",
-        "title": "Hello World"
+        "command": "commenter.init",
+        "title": "Commenter: Init the comment file"
+      },
+      {
+        "command": "commenter.CommentCurrentFile",
+        "title": "Commenter: Comment Current File"
       }
     ]
   },
